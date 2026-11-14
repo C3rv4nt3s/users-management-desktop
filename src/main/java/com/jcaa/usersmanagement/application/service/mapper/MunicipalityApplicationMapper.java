@@ -1,6 +1,7 @@
 package com.jcaa.usersmanagement.application.service.mapper;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateMunicipalityCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.DeleteMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.command.UpdateMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.query.GetMunicipalityByIdQuery;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
@@ -29,5 +30,10 @@ public class MunicipalityApplicationMapper {
   public MunicipalityId fromGetMunicipalityByIdQueryToMunicipalityId(
       final GetMunicipalityByIdQuery query) {
     return new MunicipalityId(query.id());
+  }
+
+  public MunicipalityId fromDeleteCommandToMunicipalityId(
+      final DeleteMunicipalityCommand command) {
+    return new MunicipalityId(command.id());
   }
 }
