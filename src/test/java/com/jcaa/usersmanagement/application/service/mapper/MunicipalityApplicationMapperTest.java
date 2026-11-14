@@ -3,6 +3,7 @@ package com.jcaa.usersmanagement.application.service.mapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateMunicipalityCommand;
+import com.jcaa.usersmanagement.application.service.dto.query.GetMunicipalityByIdQuery;
 import com.jcaa.usersmanagement.domain.exception.InvalidMunicipalityIdException;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityId;
@@ -48,5 +49,19 @@ class MunicipalityApplicationMapperTest {
     assertThrows(
         InvalidMunicipalityIdException.class,
         () -> MunicipalityApplicationMapper.fromCreateCommandToModel(command));
+  }
+
+  @Test
+  @DisplayName("fromGetMunicipalityByIdQueryToMunicipalityId() debe retornar el MunicipalityId")
+  void shouldMapGetByIdQueryToMunicipalityId() {
+    // Arrange
+    final GetMunicipalityByIdQuery query = new GetMunicipalityByIdQuery("13034");
+
+    // Act
+    final MunicipalityId id =
+        MunicipalityApplicationMapper.fromGetMunicipalityByIdQueryToMunicipalityId(query);
+
+    // Assert
+    assertEquals(new MunicipalityId("13034"), id);
   }
 }
