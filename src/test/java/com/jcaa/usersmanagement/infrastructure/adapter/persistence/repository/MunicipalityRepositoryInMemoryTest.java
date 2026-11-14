@@ -2,6 +2,7 @@ package com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import com.jcaa.usersmanagement.domain.exception.MunicipalityNotFoundException;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityId;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityName;
@@ -83,5 +84,35 @@ class MunicipalityRepositoryInMemoryTest {
   void shouldReturnEmptyListWhenThereAreNoMunicipalities() {
     // Act & Assert
     assertTrue(repository.getAll().isEmpty());
+  }
+
+  @Test
+  @DisplayName("update() reemplaza el municipio existente")
+  void shouldUpdateExistingMunicipality() {
+    // Arrange
+    repository.save(buildMunicipality("13034", "Ciudad Real"));
+    final MunicipalityModel changed = buildMunicipality("13034", "Ciudad Real Capital");
+
+    // Act
+    final MunicipalityModel updated = repository.update(changed);
+
+    // Assert
+    assertAll(
+        "update",
+        () -> assertSame(changed, updated),
+        () ->
+            assertEquals(
+                "Ciudad Real Capital",
+                repository.getById(new MunicipalityId("13034")).orElseThrow().getName().value()));
+  }
+
+  @Test
+  @DisplayName("update() lanza MunicipalityNotFoundException cuando el municipio no existe")
+  void shouldThrowWhenUpdatingNonExistingMunicipality() {
+    // Arrange
+    final MunicipalityModel missing = buildMunicipality("99999", "No Existe");
+
+    // Act & Assert
+    assertThrows(MunicipalityNotFoundException.class, () -> repository.update(missing));
   }
 }

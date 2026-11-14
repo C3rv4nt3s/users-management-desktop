@@ -3,6 +3,7 @@ package com.jcaa.usersmanagement.application.service.mapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateMunicipalityCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.UpdateMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.query.GetMunicipalityByIdQuery;
 import com.jcaa.usersmanagement.domain.exception.InvalidMunicipalityIdException;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
@@ -63,5 +64,23 @@ class MunicipalityApplicationMapperTest {
 
     // Assert
     assertEquals(new MunicipalityId("13034"), id);
+  }
+
+  @Test
+  @DisplayName("fromUpdateCommandToModel() debe convertir el command a un modelo de dominio")
+  void shouldMapUpdateCommandToModel() {
+    // Arrange
+    final UpdateMunicipalityCommand command =
+        new UpdateMunicipalityCommand("13034", "Ciudad Real Capital", "Ciudad Real");
+
+    // Act
+    final MunicipalityModel model = MunicipalityApplicationMapper.fromUpdateCommandToModel(command);
+
+    // Assert
+    assertAll(
+        "fromUpdateCommandToModel",
+        () -> assertEquals(new MunicipalityId("13034"), model.getId()),
+        () -> assertEquals(new MunicipalityName("Ciudad Real Capital"), model.getName()),
+        () -> assertEquals(new ProvinceName("Ciudad Real"), model.getProvinceName()));
   }
 }
