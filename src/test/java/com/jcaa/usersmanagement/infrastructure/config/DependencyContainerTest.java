@@ -7,6 +7,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mockStatic;
 
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.exception.PersistenceException;
+import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.MunicipalityController;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -78,6 +79,53 @@ class DependencyContainerTest {
 
       // Assert
       assertSame(first, second, "userController() must return the same instance on every call");
+    }
+  }
+
+  // ── municipalityController() — adaptador de memoria (sin base de datos propia)
+
+  @Test
+  @DisplayName("municipalityController() returns a non-null MunicipalityController")
+  void shouldReturnNonNullMunicipalityController() {
+    // Arrange
+    try (final MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+      mockedDriverManager
+          .when(
+              () ->
+                  DriverManager.getConnection(
+                      any(String.class), any(String.class), any(String.class)))
+          .thenReturn(mockConnection);
+
+      // Act
+      final DependencyContainer container = new DependencyContainer();
+
+      // Assert
+      assertNotNull(
+          container.municipalityController(),
+          "municipalityController() must return a non-null MunicipalityController");
+    }
+  }
+
+  @Test
+  @DisplayName("municipalityController() returns the same instance on every call")
+  void shouldReturnTheSameMunicipalityControllerInstanceOnEveryCall() {
+    // Arrange
+    try (final MockedStatic<DriverManager> mockedDriverManager = mockStatic(DriverManager.class)) {
+      mockedDriverManager
+          .when(
+              () ->
+                  DriverManager.getConnection(
+                      any(String.class), any(String.class), any(String.class)))
+          .thenReturn(mockConnection);
+      final DependencyContainer container = new DependencyContainer();
+
+      // Act
+      final MunicipalityController first = container.municipalityController();
+      final MunicipalityController second = container.municipalityController();
+
+      // Assert
+      assertSame(
+          first, second, "municipalityController() must return the same instance on every call");
     }
   }
 
