@@ -3,6 +3,8 @@ package com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository;
 import com.jcaa.usersmanagement.application.port.out.GetAllMunicipalitiesPort;
 import com.jcaa.usersmanagement.application.port.out.GetMunicipalityByIdPort;
 import com.jcaa.usersmanagement.application.port.out.SaveMunicipalityPort;
+import com.jcaa.usersmanagement.application.port.out.UpdateMunicipalityPort;
+import com.jcaa.usersmanagement.domain.exception.MunicipalityNotFoundException;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityId;
 
@@ -20,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class MunicipalityRepositoryInMemory
     implements SaveMunicipalityPort,
         GetMunicipalityByIdPort,
+        UpdateMunicipalityPort,
         GetAllMunicipalitiesPort {
 
   private final Map<MunicipalityId, MunicipalityModel> storage = new ConcurrentHashMap<>();
@@ -33,6 +36,15 @@ public final class MunicipalityRepositoryInMemory
   @Override
   public Optional<MunicipalityModel> getById(final MunicipalityId municipalityId) {
     return Optional.ofNullable(storage.get(municipalityId));
+  }
+
+  @Override
+  public MunicipalityModel update(final MunicipalityModel municipality) {
+    if (!storage.containsKey(municipality.getId())) {
+      throw MunicipalityNotFoundException.becauseIdWasNotFound(municipality.getId().value());
+    }
+    storage.put(municipality.getId(), municipality);
+    return municipality;
   }
 
   @Override
