@@ -115,4 +115,24 @@ class MunicipalityRepositoryInMemoryTest {
     // Act & Assert
     assertThrows(MunicipalityNotFoundException.class, () -> repository.update(missing));
   }
+
+  @Test
+  @DisplayName("delete() elimina el municipio")
+  void shouldDeleteMunicipality() {
+    // Arrange
+    repository.save(buildMunicipality("13034", "Ciudad Real"));
+
+    // Act
+    repository.delete(new MunicipalityId("13034"));
+
+    // Assert
+    assertTrue(repository.getById(new MunicipalityId("13034")).isEmpty());
+  }
+
+  @Test
+  @DisplayName("delete() no falla cuando el municipio no existe")
+  void shouldNotFailWhenDeletingNonExistingMunicipality() {
+    // Act & Assert
+    assertDoesNotThrow(() -> repository.delete(new MunicipalityId("99999")));
+  }
 }
