@@ -6,6 +6,7 @@ import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityId;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityName;
 import com.jcaa.usersmanagement.domain.valueobject.ProvinceName;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -58,5 +59,29 @@ class MunicipalityRepositoryInMemoryTest {
 
     // Assert
     assertTrue(found.isEmpty());
+  }
+
+  @Test
+  @DisplayName("getAll() retorna los municipios ordenados por nombre")
+  void shouldReturnAllMunicipalitiesSortedByName() {
+    // Arrange
+    repository.save(buildMunicipality("13034", "Ciudad Real"));
+    repository.save(buildMunicipality("13001", "Alcázar de San Juan"));
+    repository.save(buildMunicipality("28079", "Madrid"));
+
+    // Act
+    final List<MunicipalityModel> result = repository.getAll();
+
+    // Assert
+    assertEquals(
+        List.of("Alcázar de San Juan", "Ciudad Real", "Madrid"),
+        result.stream().map(municipality -> municipality.getName().value()).toList());
+  }
+
+  @Test
+  @DisplayName("getAll() retorna lista vacía cuando no hay municipios")
+  void shouldReturnEmptyListWhenThereAreNoMunicipalities() {
+    // Act & Assert
+    assertTrue(repository.getAll().isEmpty());
   }
 }
