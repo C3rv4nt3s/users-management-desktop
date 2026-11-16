@@ -1,6 +1,7 @@
 package com.jcaa.usersmanagement.application.service.mapper;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateMunicipalityCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.UpdateMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.query.GetMunicipalityByIdQuery;
 import com.jcaa.usersmanagement.domain.model.MunicipalityModel;
 import com.jcaa.usersmanagement.domain.valueobject.MunicipalityId;
@@ -12,6 +13,13 @@ import lombok.experimental.UtilityClass;
 public class MunicipalityApplicationMapper {
 
   public MunicipalityModel fromCreateCommandToModel(final CreateMunicipalityCommand command) {
+    return MunicipalityModel.create(
+        new MunicipalityId(command.id()),
+        new MunicipalityName(command.name()),
+        new ProvinceName(command.provinceName()));
+  }
+
+  public MunicipalityModel fromUpdateCommandToModel(final UpdateMunicipalityCommand command) {
     return MunicipalityModel.create(
         new MunicipalityId(command.id()),
         new MunicipalityName(command.name()),
