@@ -3,6 +3,7 @@ package com.jcaa.usersmanagement.application.service.mapper;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.jcaa.usersmanagement.application.service.dto.command.CreateMunicipalityCommand;
+import com.jcaa.usersmanagement.application.service.dto.command.DeleteMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.command.UpdateMunicipalityCommand;
 import com.jcaa.usersmanagement.application.service.dto.query.GetMunicipalityByIdQuery;
 import com.jcaa.usersmanagement.domain.exception.InvalidMunicipalityIdException;
@@ -82,5 +83,19 @@ class MunicipalityApplicationMapperTest {
         () -> assertEquals(new MunicipalityId("13034"), model.getId()),
         () -> assertEquals(new MunicipalityName("Ciudad Real Capital"), model.getName()),
         () -> assertEquals(new ProvinceName("Ciudad Real"), model.getProvinceName()));
+  }
+
+  @Test
+  @DisplayName("fromDeleteCommandToMunicipalityId() debe retornar el MunicipalityId")
+  void shouldMapDeleteCommandToMunicipalityId() {
+    // Arrange
+    final DeleteMunicipalityCommand command = new DeleteMunicipalityCommand("13034");
+
+    // Act
+    final MunicipalityId id =
+        MunicipalityApplicationMapper.fromDeleteCommandToMunicipalityId(command);
+
+    // Assert
+    assertEquals(new MunicipalityId("13034"), id);
   }
 }

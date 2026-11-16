@@ -1,5 +1,6 @@
 package com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository;
 
+import com.jcaa.usersmanagement.application.port.out.DeleteMunicipalityPort;
 import com.jcaa.usersmanagement.application.port.out.GetAllMunicipalitiesPort;
 import com.jcaa.usersmanagement.application.port.out.GetMunicipalityByIdPort;
 import com.jcaa.usersmanagement.application.port.out.SaveMunicipalityPort;
@@ -23,7 +24,8 @@ public final class MunicipalityRepositoryInMemory
     implements SaveMunicipalityPort,
         GetMunicipalityByIdPort,
         UpdateMunicipalityPort,
-        GetAllMunicipalitiesPort {
+        GetAllMunicipalitiesPort,
+        DeleteMunicipalityPort {
 
   private final Map<MunicipalityId, MunicipalityModel> storage = new ConcurrentHashMap<>();
 
@@ -52,5 +54,10 @@ public final class MunicipalityRepositoryInMemory
     return storage.values().stream()
         .sorted(Comparator.comparing(municipality -> municipality.getName().value()))
         .toList();
+  }
+
+  @Override
+  public void delete(final MunicipalityId municipalityId) {
+    storage.remove(municipalityId);
   }
 }
