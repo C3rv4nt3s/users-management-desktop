@@ -1,23 +1,35 @@
 package com.jcaa.usersmanagement.infrastructure.config;
 
+import com.jcaa.usersmanagement.application.port.in.CreateMunicipalityUseCase;
 import com.jcaa.usersmanagement.application.port.in.CreateUserUseCase;
+import com.jcaa.usersmanagement.application.port.in.DeleteMunicipalityUseCase;
 import com.jcaa.usersmanagement.application.port.in.DeleteUserUseCase;
+import com.jcaa.usersmanagement.application.port.in.GetAllMunicipalitiesUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetAllUsersUseCase;
+import com.jcaa.usersmanagement.application.port.in.GetMunicipalityByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.GetUserByIdUseCase;
 import com.jcaa.usersmanagement.application.port.in.LoginUseCase;
+import com.jcaa.usersmanagement.application.port.in.UpdateMunicipalityUseCase;
 import com.jcaa.usersmanagement.application.port.in.UpdateUserUseCase;
+import com.jcaa.usersmanagement.application.service.CreateMunicipalityService;
 import com.jcaa.usersmanagement.application.service.CreateUserService;
+import com.jcaa.usersmanagement.application.service.DeleteMunicipalityService;
 import com.jcaa.usersmanagement.application.service.DeleteUserService;
 import com.jcaa.usersmanagement.application.service.EmailNotificationService;
+import com.jcaa.usersmanagement.application.service.GetAllMunicipalitiesService;
 import com.jcaa.usersmanagement.application.service.GetAllUsersService;
+import com.jcaa.usersmanagement.application.service.GetMunicipalityByIdService;
 import com.jcaa.usersmanagement.application.service.GetUserByIdService;
 import com.jcaa.usersmanagement.application.service.LoginService;
+import com.jcaa.usersmanagement.application.service.UpdateMunicipalityService;
 import com.jcaa.usersmanagement.application.service.UpdateUserService;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.JavaMailEmailSenderAdapter;
 import com.jcaa.usersmanagement.infrastructure.adapter.email.SmtpConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConfig;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.config.DatabaseConnectionFactory;
+import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.MunicipalityRepositoryInMemory;
 import com.jcaa.usersmanagement.infrastructure.adapter.persistence.repository.UserRepositoryMySQL;
+import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.MunicipalityController;
 import com.jcaa.usersmanagement.infrastructure.entrypoint.desktop.controller.UserController;
 
 import java.sql.Connection;
@@ -39,6 +51,7 @@ public final class DependencyContainer {
   private static final String SMTP_FROM_NAME = "smtp.from.name";
 
   private final UserController userController;
+  private final MunicipalityController municipalityController;
 
   public DependencyContainer() {
     final AppProperties properties = new AppProperties();
@@ -71,10 +84,36 @@ public final class DependencyContainer {
             getUserByIdUseCase,
             getAllUsersUseCase,
             loginUseCase);
+
+    // Municipality (CEA: Censo de población) — adaptador de memoria
+    final MunicipalityRepositoryInMemory municipalityRepository = new MunicipalityRepositoryInMemory();
+
+    final CreateMunicipalityUseCase createMunicipalityUseCase =
+        new CreateMunicipalityService(municipalityRepository, municipalityRepository, validator);
+    final UpdateMunicipalityUseCase updateMunicipalityUseCase =
+        new UpdateMunicipalityService(municipalityRepository, municipalityRepository, validator);
+    final DeleteMunicipalityUseCase deleteMunicipalityUseCase =
+        new DeleteMunicipalityService(municipalityRepository, municipalityRepository, validator);
+    final GetMunicipalityByIdUseCase getMunicipalityByIdUseCase =
+        new GetMunicipalityByIdService(municipalityRepository, validator);
+    final GetAllMunicipalitiesUseCase getAllMunicipalitiesUseCase =
+        new GetAllMunicipalitiesService(municipalityRepository);
+
+    this.municipalityController =
+        new MunicipalityController(
+            createMunicipalityUseCase,
+            updateMunicipalityUseCase,
+            deleteMunicipalityUseCase,
+            getMunicipalityByIdUseCase,
+            getAllMunicipalitiesUseCase);
   }
 
   public UserController userController() {
     return userController;
+  }
+
+  public MunicipalityController municipalityController() {
+    return municipalityController;
   }
 
   private static Connection buildDatabaseConnection(final AppProperties properties) {

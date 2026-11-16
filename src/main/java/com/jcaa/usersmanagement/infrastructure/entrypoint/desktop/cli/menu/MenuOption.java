@@ -14,6 +14,11 @@ public enum MenuOption {
   UPDATE_USER(4, "Update user"),
   DELETE_USER(5, "Delete user"),
   LOGIN(6, "Login"),
+  LIST_MUNICIPALITIES(7, "List all municipalities"),
+  FIND_MUNICIPALITY(8, "Find municipality by ID"),
+  CREATE_MUNICIPALITY(9, "Create municipality"),
+  UPDATE_MUNICIPALITY(10, "Update municipality"),
+  DELETE_MUNICIPALITY(11, "Delete municipality"),
   EXIT(0, "Exit");
 
   private final int number;
